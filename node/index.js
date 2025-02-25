@@ -1,8 +1,6 @@
 const express = require('express')
 const app = express()
 
-app.use(express.json())
-
 let notes = [
     {
         id: "1",
@@ -20,6 +18,21 @@ let notes = [
         important: true, 
     },
 ]
+
+const requestLogger = (request, response, next) => {
+    console.log('Mehtod:', request.method)
+    console.log('Path:', request.path)
+    console.log('Body:', request.body)
+    console.log('---')
+    next()
+}
+
+app.use(express.json())
+app.use(requestLogger)
+
+const unkownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unkown endpoint' })
+}
 
 app.get('/', (request,response) => {
     response.send('<h1>Hello World!<h1>')
@@ -44,12 +57,6 @@ app.delete('api/notes/:id', (request, response) => {
     notes = notes.filter(note => note.id !== id)
 
     response.status(204).end()
-})
-
-app.post('/api/notes', (request, response) => {
-    const note = request.body
-    console.log(note)
-    response.json(note)
 })
 
 const generateId = () => {
