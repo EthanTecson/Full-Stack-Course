@@ -1,5 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
+require('dotenv').config()
+const Note = require('./models/note')
 const app = express()
 
 let notes = [
@@ -19,19 +21,6 @@ let notes = [
     important: true
   }
 ]
-
-const password = process.argv[2]
-const url = `mongodb+srv://fullstack:${password}@fullstack.fmyet.mongodb.net/noteApp?retryWrites=true&w=majority&appName=fullstack`
-
-mongoose.set('strictQuery',false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 app.get('/api/notes', (request, response) => {
   Note.find({}).then(notes => {
